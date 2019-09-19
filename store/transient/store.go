@@ -29,6 +29,13 @@ func (ts *Store) Commit() (id types.CommitID) {
 }
 
 // Implements CommitStore
+// Commit cleans up Store by store keys.
+func (ts *Store) CommitByKeyStore([]*types.KVStoreKey) (id types.CommitID) {
+	ts.Store = dbadapter.Store{dbm.NewMemDB()}
+	return
+}
+
+// Implements CommitStore
 func (ts *Store) SetPruning(pruning types.PruningOptions) {
 }
 

@@ -211,6 +211,28 @@ func (rs *Store) Commit() types.CommitID {
 	return commitID
 }
 
+//CommitByKeyStore commit clean up stores by keys
+func (rs *Store) CommitByKeyStore(keyList []*types.KVStoreKey) types.CommitID {
+
+	// Commit stores.
+	version := rs.lastCommitID.Version + 1
+	commitInfo := commitStores(version, rs.stores)
+
+	// Need to update atomically.
+	batch := rs.db.NewBatch()
+	setCommitInfo(batch, version, commitInfo)
+	setLatestVersion(batch, version)
+	batch.Write()
+
+	// Prepare for next version.
+	commitID := types.CommitID{
+		Version: version,
+		Hash:    commitInfo.Hash(),
+	}
+	rs.lastCommitID = commitID
+	return commitID
+}
+
 // Implements CacheWrapper/Store/CommitStore.
 func (rs *Store) CacheWrap() types.CacheWrap {
 	return rs.CacheMultiStore().(types.CacheWrap)
@@ -503,6 +525,48 @@ func commitStores(version int64, storeMap map[types.StoreKey]types.CommitStore) 
 		storeInfos = append(storeInfos, si)
 	}
 
+	ci := commitInfo{
+		Version:    version,
+		StoreInfos: storeInfos,
+	}
+	return ci
+}
+
+// Commits stores by key stores and returns a new commitInfo.
+func commitStores(version int64, storeMap map[types.StoreKey]types.CommitStore, keyList []*types.KVStoreKey) commitInfo {
+	storeInfos := make([]storeInfo, 0, len(storeMap))
+	if len(KVStoreList) > 0 {
+		for _, key := range KVStoreList {
+			if store, ok := storeMap[key]; ok {
+				// Commit
+				commitID := store.Commit([]*sdk.KVStoreKey{})
+				if store.GetStoreType() == sdk.StoreTypeTransient {
+					continue
+				}
+				// Record CommitID
+				si := storeInfo{}
+				si.Name = key.Name()
+				si.Core.CommitID = commitID
+				// si.Core.StoreType = store.GetStoreType()
+				storeInfos = append(storeInfos, si)
+			}
+		}
+
+	} else {
+		for key, store := range storeMap {
+			// Commit
+			commitID := store.Commit([]*sdk.KVStoreKey{})
+			if store.GetStoreType() == sdk.StoreTypeTransient {
+				continue
+			}
+			// Record CommitID
+			si := storeInfo{}
+			si.Name = key.Name()
+			si.Core.CommitID = commitID
+			// si.Core.StoreType = store.GetStoreType()
+			storeInfos = append(storeInfos, si)
+		}
+	}
 	ci := commitInfo{
 		Version:    version,
 		StoreInfos: storeInfos,

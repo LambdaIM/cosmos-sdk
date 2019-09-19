@@ -42,6 +42,10 @@ func (ms multiStore) Commit() sdk.CommitID {
 	panic("not implemented")
 }
 
+func (ms multiStore) CommitByKeyStore([]*sdk.KVStoreKey) sdk.CommitID {
+	panic("not implemented")
+}
+
 func (ms multiStore) LastCommitID() sdk.CommitID {
 	panic("not implemented")
 }
