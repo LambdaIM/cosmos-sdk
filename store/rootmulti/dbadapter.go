@@ -23,6 +23,13 @@ func (cdsa commitDBStoreAdapter) Commit() types.CommitID {
 	}
 }
 
+func (cdsa commitDBStoreAdapter) CommitByKeyStore([]*types.KVStoreKey) types.CommitID {
+	return types.CommitID{
+		Version: -1,
+		Hash:    commithash,
+	}
+}
+
 func (cdsa commitDBStoreAdapter) LastCommitID() types.CommitID {
 	return types.CommitID{
 		Version: -1,
