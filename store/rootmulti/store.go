@@ -216,7 +216,7 @@ func (rs *Store) CommitByKeyStore(keyList []*types.KVStoreKey) types.CommitID {
 
 	// Commit stores.
 	version := rs.lastCommitID.Version + 1
-	commitInfo := commitStores(version, rs.stores)
+	commitInfo := commitStoresByKVStore(version, rs.stores, keyList)
 
 	// Need to update atomically.
 	batch := rs.db.NewBatch()
@@ -533,13 +533,13 @@ func commitStores(version int64, storeMap map[types.StoreKey]types.CommitStore) 
 }
 
 // Commits stores by key stores and returns a new commitInfo.
-func commitStores(version int64, storeMap map[types.StoreKey]types.CommitStore, keyList []*types.KVStoreKey) commitInfo {
+func commitStoresByKVStore(version int64, storeMap map[types.StoreKey]types.CommitStore, keyList []*types.KVStoreKey) commitInfo {
 	storeInfos := make([]storeInfo, 0, len(storeMap))
 	if len(KVStoreList) > 0 {
 		for _, key := range KVStoreList {
 			if store, ok := storeMap[key]; ok {
 				// Commit
-				commitID := store.Commit([]*sdk.KVStoreKey{})
+				commitID := store.CommitByKeyStore(keyList)
 				if store.GetStoreType() == sdk.StoreTypeTransient {
 					continue
 				}
@@ -555,7 +555,7 @@ func commitStores(version int64, storeMap map[types.StoreKey]types.CommitStore, 
 	} else {
 		for key, store := range storeMap {
 			// Commit
-			commitID := store.Commit([]*sdk.KVStoreKey{})
+			commitID := store.Commit()
 			if store.GetStoreType() == sdk.StoreTypeTransient {
 				continue
 			}
