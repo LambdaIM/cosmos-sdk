@@ -535,12 +535,12 @@ func commitStores(version int64, storeMap map[types.StoreKey]types.CommitStore) 
 // Commits stores by key stores and returns a new commitInfo.
 func commitStoresByKVStore(version int64, storeMap map[types.StoreKey]types.CommitStore, keyList []*types.KVStoreKey) commitInfo {
 	storeInfos := make([]storeInfo, 0, len(storeMap))
-	if len(KVStoreList) > 0 {
-		for _, key := range KVStoreList {
+	if len(keyList) > 0 {
+		for _, key := range keyList {
 			if store, ok := storeMap[key]; ok {
 				// Commit
 				commitID := store.CommitByKeyStore(keyList)
-				if store.GetStoreType() == sdk.StoreTypeTransient {
+				if store.GetStoreType() == types.StoreTypeTransient {
 					continue
 				}
 				// Record CommitID
@@ -556,7 +556,7 @@ func commitStoresByKVStore(version int64, storeMap map[types.StoreKey]types.Comm
 		for key, store := range storeMap {
 			// Commit
 			commitID := store.Commit()
-			if store.GetStoreType() == sdk.StoreTypeTransient {
+			if store.GetStoreType() == types.StoreTypeTransient {
 				continue
 			}
 			// Record CommitID
