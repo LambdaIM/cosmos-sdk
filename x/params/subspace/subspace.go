@@ -6,6 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
+	"errors"
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 )
 
@@ -87,6 +88,55 @@ func concatKeys(key, subkey []byte) (res []byte) {
 	res[len(key)] = '/'
 	copy(res[len(key)+1:], subkey)
 	return
+}
+
+// Update stores raw parameter bytes. It returns error if the stored parameter
+// has a different type from the input. It also sets to the transient store to
+// record change.
+func (s Subspace) Update(ctx sdk.Context, key []byte, param []byte) error {
+	attr, ok := s.table.m[string(key)]
+	if !ok {
+		panic("Parameter not registered")
+	}
+
+	ty := attr.ty
+	dest := reflect.New(ty).Interface()
+	s.GetIfExists(ctx, key, dest)
+	err := s.cdc.UnmarshalJSON(param, dest)
+	if err != nil {
+		return err
+	}
+
+	s.Set(ctx, key, dest)
+	tStore := s.transientStore(ctx)
+	tStore.Set(key, []byte{})
+
+	return nil
+}
+
+// UpdateWithSubkey stores raw parameter bytes  with a key and subkey. It checks
+// the parameter type only over the key.
+func (s Subspace) UpdateWithSubkey(ctx sdk.Context, key []byte, subkey []byte, param []byte) error {
+	concatkey := concatKeys(key, subkey)
+
+	attr, ok := s.table.m[string(concatkey)]
+	if !ok {
+		return errors.New("parameter not registered")
+	}
+
+	ty := attr.ty
+	dest := reflect.New(ty).Interface()
+	s.GetWithSubkeyIfExists(ctx, key, subkey, dest)
+	err := s.cdc.UnmarshalJSON(param, dest)
+	if err != nil {
+		return err
+	}
+
+	s.SetWithSubkey(ctx, key, subkey, dest)
+	tStore := s.transientStore(ctx)
+	tStore.Set(concatkey, []byte{})
+
+	return nil
 }
 
 // Get parameter from store
