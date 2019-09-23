@@ -4,6 +4,17 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
+)
+
+// Parameter store keys
+var (
+	KeyMintDenom           = []byte("MintDenom")
+	KeyInflationRateChange = []byte("InflationRateChange")
+	KeyInflationMax        = []byte("InflationMax")
+	KeyInflationMin        = []byte("InflationMin")
+	KeyGoalBonded          = []byte("GoalBonded")
+	KeyBlocksPerYear       = []byte("BlocksPerYear")
 )
 
 // mint parameters
@@ -69,4 +80,16 @@ func (p Params) String() string {
 		p.MintDenom, p.InflationRateChange, p.InflationMax,
 		p.InflationMin, p.GoalBonded, p.BlocksPerYear,
 	)
+}
+
+// Implements params.ParamSet
+func (p *Params) ParamSetPairs() params.ParamSetPairs {
+	return params.ParamSetPairs{
+		{KeyMintDenom, &p.MintDenom},
+		{KeyInflationRateChange, &p.InflationRateChange},
+		{KeyInflationMax, &p.InflationMax},
+		{KeyInflationMin, &p.InflationMin},
+		{KeyGoalBonded, &p.GoalBonded},
+		{KeyBlocksPerYear, &p.BlocksPerYear},
+	}
 }
