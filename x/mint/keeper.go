@@ -82,11 +82,11 @@ func (k Keeper) SetMinter(ctx sdk.Context, minter Minter) {
 // get inflation params from the global param store
 func (k Keeper) GetParams(ctx sdk.Context) Params {
 	var params Params
-	k.paramSpace.Get(ctx, ParamStoreKeyParams, &params)
+	k.paramSpace.GetParamSet(ctx, &params)
 	return params
 }
 
 // set inflation params from the global param store
 func (k Keeper) SetParams(ctx sdk.Context, params Params) {
-	k.paramSpace.Set(ctx, ParamStoreKeyParams, &params)
+	k.paramSpace.SetParamSet(ctx, &params)
 }
