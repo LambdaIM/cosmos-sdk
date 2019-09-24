@@ -54,9 +54,7 @@ var (
 
 // ParamTable for staking module
 func ParamKeyTable() params.KeyTable {
-	return params.NewKeyTable(
-		ParamStoreKeyParams, Params{},
-	)
+	return params.NewKeyTable().RegisterParamSet(&Params{})
 }
 
 //______________________________________________________________________
