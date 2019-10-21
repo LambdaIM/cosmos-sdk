@@ -58,6 +58,8 @@ type GenesisState struct {
 	CommunityTax                    sdk.Dec                                `json:"community_tax"`
 	BaseProposerReward              sdk.Dec                                `json:"base_proposer_reward"`
 	BonusProposerReward             sdk.Dec                                `json:"bonus_proposer_reward"`
+	PdpReward                       sdk.Dec                                `json:"pdp_reward"`
+	PdpProposerReward               sdk.Dec                                `json:"pdp_proposer_reward"`
 	WithdrawAddrEnabled             bool                                   `json:"withdraw_addr_enabled"`
 	DelegatorWithdrawInfos          []DelegatorWithdrawInfo                `json:"delegator_withdraw_infos"`
 	PreviousProposer                sdk.ConsAddress                        `json:"previous_proposer"`
@@ -69,7 +71,7 @@ type GenesisState struct {
 	ValidatorSlashEvents            []ValidatorSlashEventRecord            `json:"validator_slash_events"`
 }
 
-func NewGenesisState(feePool FeePool, communityTax, baseProposerReward, bonusProposerReward sdk.Dec,
+func NewGenesisState(feePool FeePool, communityTax, baseProposerReward, bonusProposerReward, pdpReward, pdpProposerReward sdk.Dec,
 	withdrawAddrEnabled bool, dwis []DelegatorWithdrawInfo, pp sdk.ConsAddress, r []ValidatorOutstandingRewardsRecord,
 	acc []ValidatorAccumulatedCommissionRecord, historical []ValidatorHistoricalRewardsRecord,
 	cur []ValidatorCurrentRewardsRecord, dels []DelegatorStartingInfoRecord,
@@ -80,6 +82,8 @@ func NewGenesisState(feePool FeePool, communityTax, baseProposerReward, bonusPro
 		CommunityTax:                    communityTax,
 		BaseProposerReward:              baseProposerReward,
 		BonusProposerReward:             bonusProposerReward,
+		PdpReward:                       pdpReward,
+		PdpProposerReward:               pdpProposerReward,
 		WithdrawAddrEnabled:             withdrawAddrEnabled,
 		DelegatorWithdrawInfos:          dwis,
 		PreviousProposer:                pp,
@@ -96,9 +100,11 @@ func NewGenesisState(feePool FeePool, communityTax, baseProposerReward, bonusPro
 func DefaultGenesisState() GenesisState {
 	return GenesisState{
 		FeePool:                         InitialFeePool(),
-		CommunityTax:                    sdk.NewDecWithPrec(2, 2), // 2%
-		BaseProposerReward:              sdk.NewDecWithPrec(1, 2), // 1%
-		BonusProposerReward:             sdk.NewDecWithPrec(4, 2), // 4%
+		CommunityTax:                    sdk.NewDecWithPrec(2, 2),  // 2%
+		BaseProposerReward:              sdk.NewDecWithPrec(1, 2),  // 1%
+		BonusProposerReward:             sdk.NewDecWithPrec(4, 2),  // 4%
+		PdpReward:                       sdk.NewDecWithPrec(43, 2), // 43%
+		PdpProposerReward:               sdk.NewDecWithPrec(5, 2),  // 5%
 		WithdrawAddrEnabled:             true,
 		DelegatorWithdrawInfos:          []DelegatorWithdrawInfo{},
 		PreviousProposer:                nil,
@@ -124,6 +130,14 @@ func ValidateGenesis(data GenesisState) error {
 	if data.BonusProposerReward.IsNegative() {
 		return fmt.Errorf("mint parameter BonusProposerReward should be positive, is %s",
 			data.BonusProposerReward.String())
+	}
+	if data.PdpReward.IsNegative() {
+		return fmt.Errorf("mint parameter PdpReward should be positive, is %s",
+			data.PdpReward.String())
+	}
+	if data.PdpProposerReward.IsNegative() {
+		return fmt.Errorf("mint parameter PdpProposerReward should be positive, is %s",
+			data.PdpProposerReward.String())
 	}
 	if (data.BaseProposerReward.Add(data.BonusProposerReward)).
 		GT(sdk.OneDec()) {

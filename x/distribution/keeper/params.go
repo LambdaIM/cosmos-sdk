@@ -11,6 +11,8 @@ func ParamKeyTable() params.KeyTable {
 		ParamStoreKeyCommunityTax, sdk.Dec{},
 		ParamStoreKeyBaseProposerReward, sdk.Dec{},
 		ParamStoreKeyBonusProposerReward, sdk.Dec{},
+		ParamStoreKeyPdpReward, sdk.Dec{},
+		ParamStoreKeyPdpProposerReward, sdk.Dec{},
 		ParamStoreKeyWithdrawAddrEnabled, false,
 	)
 }
@@ -65,4 +67,24 @@ func (k Keeper) GetWithdrawAddrEnabled(ctx sdk.Context) bool {
 // nolint: errcheck
 func (k Keeper) SetWithdrawAddrEnabled(ctx sdk.Context, enabled bool) {
 	k.paramSpace.Set(ctx, ParamStoreKeyWithdrawAddrEnabled, &enabled)
+}
+
+func (k Keeper) SetPdpProposerReward(ctx sdk.Context, percent sdk.Dec) {
+	k.paramSpace.Set(ctx, ParamStoreKeyPdpProposerReward, &percent)
+}
+
+func (k Keeper) GetPdpProposerReward(ctx sdk.Context) sdk.Dec {
+	var percent sdk.Dec
+	k.paramSpace.Get(ctx, ParamStoreKeyPdpProposerReward, &percent)
+	return percent
+}
+
+func (k Keeper) SetPdpReward(ctx sdk.Context, percent sdk.Dec) {
+	k.paramSpace.Set(ctx, ParamStoreKeyPdpReward, &percent)
+}
+
+func (k Keeper) GetPdpReward(ctx sdk.Context) sdk.Dec {
+	var percent sdk.Dec
+	k.paramSpace.Get(ctx, ParamStoreKeyPdpReward, &percent)
+	return percent
 }

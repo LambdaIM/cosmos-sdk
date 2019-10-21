@@ -28,6 +28,8 @@ var (
 	ParamStoreKeyCommunityTax        = []byte("communitytax")
 	ParamStoreKeyBaseProposerReward  = []byte("baseproposerreward")
 	ParamStoreKeyBonusProposerReward = []byte("bonusproposerreward")
+	ParamStoreKeyPdpReward           = []byte("pdpReward")
+	ParamStoreKeyPdpProposerReward   = []byte("pdpProposerReward")
 	ParamStoreKeyWithdrawAddrEnabled = []byte("withdrawaddrenabled")
 )
 
