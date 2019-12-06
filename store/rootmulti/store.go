@@ -41,6 +41,7 @@ type Store struct {
 
 var _ types.CommitMultiStore = (*Store)(nil)
 var _ types.Queryable = (*Store)(nil)
+var _ types.ForkableCommitMultiStore = (*Store)(nil)
 
 // nolint
 func NewStore(db dbm.DB) *Store {
@@ -141,6 +142,51 @@ func (rs *Store) LoadVersion(ver int64) error {
 		}
 
 		store, err := rs.loadCommitStoreFromParams(key, id, storeParams)
+		if err != nil {
+			return fmt.Errorf("failed to load Store: %v", err)
+		}
+		newStores[key] = store
+	}
+
+	// Success.
+	rs.lastCommitID = cInfo.CommitID()
+	rs.stores = newStores
+	return nil
+}
+
+// LoadVersionForOverwriting works much like LoadVersion except that it will delete all
+// versions based on given 'ver'
+// NOTE: require ver > 0, since fork from 0 is meaningless
+func (rs *Store) LoadVersionForOverwriting(ver int64) error {
+
+	// Special logic for version 0
+	if ver == 0 {
+		return fmt.Errorf("loading for overwriting require ver > 0")
+	}
+	// Otherwise, version is 1 or greater
+
+	// Get commitInfo
+	cInfo, err := getCommitInfo(rs.db, ver)
+	if err != nil {
+		return err
+	}
+
+	// Convert StoreInfos slice to map
+	infos := make(map[types.StoreKey]storeInfo)
+	for _, storeInfo := range cInfo.StoreInfos {
+		infos[rs.nameToKey(storeInfo.Name)] = storeInfo
+	}
+
+	// Load each Store
+	var newStores = make(map[types.StoreKey]types.CommitStore)
+	for key, storeParams := range rs.storesParams {
+		var id types.CommitID
+		info, ok := infos[key]
+		if ok {
+			id = info.Core.CommitID
+		}
+
+		store, err := rs.loadCommitStoreFromParamsForOverwriting(key, id, storeParams)
 		if err != nil {
 			return fmt.Errorf("failed to load Store: %v", err)
 		}
@@ -394,6 +440,28 @@ func (rs *Store) loadCommitStoreFromParams(key types.StoreKey, id types.CommitID
 		}
 		store = transient.NewStore()
 		return
+	default:
+		panic(fmt.Sprintf("unrecognized store type %v", params.typ))
+	}
+}
+
+func (rs *Store) loadCommitStoreFromParamsForOverwriting(key types.StoreKey, id types.CommitID, params storeParams) (store types.CommitStore, err error) {
+	var db dbm.DB
+	if params.db != nil {
+		db = dbm.NewPrefixDB(params.db, []byte("s/_/"))
+	} else {
+		db = dbm.NewPrefixDB(rs.db, []byte("s/k:"+params.key.Name()+"/"))
+	}
+	switch params.typ {
+	case types.StoreTypeMulti:
+		panic("recursive MultiStores loading specific version for overwriting is not yet supported")
+	case types.StoreTypeIAVL:
+		store, err = iavl.LoadStoreForOverwriting(db, id, rs.pruningOpts)
+		return
+	case types.StoreTypeDB:
+		panic("general database-based Store loading specific version for overwriting is not yet supported")
+	case types.StoreTypeTransient:
+		panic("TransientStore loading specific version for overwriting is not yet supported")
 	default:
 		panic(fmt.Sprintf("unrecognized store type %v", params.typ))
 	}

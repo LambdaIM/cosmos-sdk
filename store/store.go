@@ -11,6 +11,10 @@ func NewCommitMultiStore(db dbm.DB) types.CommitMultiStore {
 	return rootmulti.NewStore(db)
 }
 
+func NewForkableCommitMultiStore(db dbm.DB) types.CommitMultiStore {
+	return rootmulti.NewStore(db)
+}
+
 func NewPruningOptionsFromString(strategy string) (opt PruningOptions) {
 	switch strategy {
 	case "nothing":

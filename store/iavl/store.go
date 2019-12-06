@@ -33,6 +33,18 @@ func LoadStore(db dbm.DB, id types.CommitID, pruning types.PruningOptions) (type
 	return iavl, nil
 }
 
+// LoadStoreForOverwriting returns the iavl store instance for state overwriting (fork)
+func LoadStoreForOverwriting(db dbm.DB, id types.CommitID, pruning types.PruningOptions) (types.CommitStore, error) {
+	tree := iavl.NewMutableTree(db, defaultIAVLCacheSize)
+	_, err := tree.LoadVersionForOverwriting(id.Version)
+	if err != nil {
+		return nil, err
+	}
+	iavl := UnsafeNewStore(tree, int64(0), int64(0))
+	iavl.SetPruning(pruning)
+	return iavl, nil
+}
+
 //----------------------------------------
 
 var _ types.KVStore = (*Store)(nil)

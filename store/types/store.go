@@ -98,6 +98,18 @@ type CommitMultiStore interface {
 	LoadVersion(ver int64) error
 }
 
+// A forkable non-cache MultiStore
+type ForkableCommitMultiStore interface {
+	CommitMultiStore
+
+	// LoadVersionForOverwriting tries to restore all substores to a
+	// specific version. And different from CommitMultiStore.LoadVersion,
+	// the next commit after loading *DOES NOT* have to be idempotent.
+	// WARNING: this operation *WILL DELETE* all persisted versions that
+	// based on (after) given 'ver' indicated version
+	LoadVersionForOverwriting(ver int64) error
+}
+
 //---------subsp-------------------------------
 // KVStore
 
