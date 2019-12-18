@@ -17,8 +17,9 @@ import (
 )
 
 const (
-	DefaultPage  = 1
-	DefaultLimit = 30 // should be consistent with tendermint/tendermint/rpc/core/pipe.go:19
+	DefaultPage        = 1
+	DefaultLimit       = 30 // should be consistent with tendermint/tendermint/rpc/core/pipe.go:19
+	TxGreatHeightKey = "tx.gHeight"
 )
 
 // GasEstimateResponse defines a response definition for tx gas estimation.
@@ -233,10 +234,11 @@ func ParseHTTPArgs(r *http.Request) (tags []string, page, limit int, err error) 
 		if err != nil {
 			return tags, page, limit, err
 		}
-
 		var tag string
 		if key == types.TxHeightKey {
 			tag = fmt.Sprintf("%s=%s", key, value)
+		} else if key == TxGreatHeightKey {
+			tag = fmt.Sprintf("%s>%s", types.TxHeightKey, value)
 		} else {
 			tag = fmt.Sprintf("%s='%s'", key, value)
 		}

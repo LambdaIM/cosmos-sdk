@@ -9,6 +9,7 @@ import (
 var (
 	Rewards    = "rewards"
 	Commission = "commission"
+	Address = "address"
 
 	Validator = sdk.TagSrcValidator
 	Delegator = sdk.TagDelegator

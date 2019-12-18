@@ -7,4 +7,5 @@ var (
 
 	TagKeyRecipient = "recipient"
 	TagKeySender    = "sender"
+	TagKeyAddress = "address"
 )
