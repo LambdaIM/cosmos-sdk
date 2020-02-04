@@ -147,6 +147,10 @@ func ErrBadSharesAmount(codespace sdk.CodespaceType) sdk.Error {
 	return sdk.NewError(codespace, CodeInvalidDelegation, "shares must be > 0")
 }
 
+func ErrInvalidShareAmount(codespace sdk.CodespaceType, delShares, shares string) sdk.Error {
+	return sdk.NewError(codespace, CodeInvalidDelegation, fmt.Sprintf("the input share %v can't not be greater than expected truncated share %v", shares, delShares))
+}
+
 func ErrBadSharesPercent(codespace sdk.CodespaceType) sdk.Error {
 	return sdk.NewError(codespace, CodeInvalidDelegation, "shares percent must be >0 and <=1")
 }

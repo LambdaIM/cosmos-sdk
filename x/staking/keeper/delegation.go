@@ -746,7 +746,7 @@ func (k Keeper) ValidateUnbondAmount(
 
 	delShares := del.GetShares()
 	if sharesTruncated.GT(delShares) {
-		return shares, types.ErrBadSharesAmount(k.Codespace())
+		return shares, types.ErrInvalidShareAmount(k.Codespace(), delShares.String(), sharesTruncated.String())
 	}
 
 	// Cap the shares at the delegation's shares. Shares being greater could occur

@@ -159,6 +159,7 @@ var (
 	ErrDelegationValidatorEmpty  = types.ErrDelegationValidatorEmpty
 	ErrNotEnoughDelegationShares = types.ErrNotEnoughDelegationShares
 	ErrBadSharesAmount           = types.ErrBadSharesAmount
+	ErrInvalidShareAmount        = types.ErrInvalidShareAmount
 	ErrBadSharesPercent          = types.ErrBadSharesPercent
 
 	ErrNotMature             = types.ErrNotMature
