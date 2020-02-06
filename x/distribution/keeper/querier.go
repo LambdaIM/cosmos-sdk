@@ -26,6 +26,8 @@ const (
 	ParamBaseProposerReward  = "base_proposer_reward"
 	ParamBonusProposerReward = "bonus_proposer_reward"
 	ParamWithdrawAddrEnabled = "withdraw_addr_enabled"
+	ParamPdpReward           = "pdp_reward"
+	ParamPdpProposerReward   = "pdp_proposer_reward"
 )
 
 func NewQuerier(k Keeper) sdk.Querier {
@@ -86,6 +88,18 @@ func queryParams(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper
 		return bz, nil
 	case ParamWithdrawAddrEnabled:
 		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetWithdrawAddrEnabled(ctx))
+		if err != nil {
+			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
+		}
+		return bz, nil
+	case ParamPdpReward:
+		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetPdpReward(ctx))
+		if err != nil {
+			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
+		}
+		return bz, nil
+	case ParamPdpProposerReward:
+		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetPdpProposerReward(ctx))
 		if err != nil {
 			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
 		}
