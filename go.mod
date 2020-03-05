@@ -51,4 +51,7 @@ require (
 	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
 
-replace golang.org/x/crypto => github.com/tendermint/crypto v0.0.0-20180820045704-3764759f34a5
+replace (
+	github.com/tendermint/tendermint => github.com/LambdaIM/tendermint v0.31.5-dev2
+	golang.org/x/crypto => github.com/tendermint/crypto v0.0.0-20180820045704-3764759f34a5
+)
