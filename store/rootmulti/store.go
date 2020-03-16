@@ -459,9 +459,16 @@ func (rs *Store) loadCommitStoreFromParamsForOverwriting(key types.StoreKey, id 
 		store, err = iavl.LoadStoreForOverwriting(db, id, rs.pruningOpts)
 		return
 	case types.StoreTypeDB:
-		panic("general database-based Store loading specific version for overwriting is not yet supported")
+		store = commitDBStoreAdapter{dbadapter.Store{db}}
+		return
 	case types.StoreTypeTransient:
-		panic("TransientStore loading specific version for overwriting is not yet supported")
+		_, ok := key.(*types.TransientStoreKey)
+		if !ok {
+			err = fmt.Errorf("invalid StoreKey for StoreTypeTransient: %s", key.String())
+			return
+		}
+		store = transient.NewStore()
+		return
 	default:
 		panic(fmt.Sprintf("unrecognized store type %v", params.typ))
 	}
