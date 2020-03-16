@@ -107,7 +107,7 @@ type ForkableCommitMultiStore interface {
 	// the next commit after loading *DOES NOT* have to be idempotent.
 	// WARNING: this operation *WILL DELETE* all persisted versions that
 	// based on (after) given 'ver' indicated version
-	LoadVersionForOverwriting(ver int64) error
+	LoadVersionForOverwriting(ver int64, resetLastVer bool) error
 }
 
 //---------subsp-------------------------------

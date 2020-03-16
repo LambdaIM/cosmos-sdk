@@ -157,7 +157,8 @@ func (rs *Store) LoadVersion(ver int64) error {
 // LoadVersionForOverwriting works much like LoadVersion except that it will delete all
 // versions based on given 'ver'
 // NOTE: require ver > 0, since fork from 0 is meaningless
-func (rs *Store) LoadVersionForOverwriting(ver int64) error {
+//resetLastVer reset last version to the given ver
+func (rs *Store) LoadVersionForOverwriting(ver int64, resetLastVer bool) error {
 
 	// Special logic for version 0
 	if ver == 0 {
@@ -196,6 +197,14 @@ func (rs *Store) LoadVersionForOverwriting(ver int64) error {
 	// Success.
 	rs.lastCommitID = cInfo.CommitID()
 	rs.stores = newStores
+
+	// update latest version
+	if resetLastVer {
+		batch := rs.db.NewBatch()
+		setLatestVersion(batch, ver)
+		batch.Write()
+	}
+
 	return nil
 }
 
