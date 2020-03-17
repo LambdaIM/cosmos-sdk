@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/cosmos/cosmos-sdk/codec"
 	ctypes "github.com/tendermint/tendermint/rpc/core/types"
 )
 
@@ -252,6 +253,6 @@ func (r TxResponse) Empty() bool {
 // ParseABCILogs attempts to parse a stringified ABCI tx log into a slice of
 // ABCIMessageLog types. It returns an error upon JSON decoding failure.
 func ParseABCILogs(logs string) (res ABCIMessageLogs, err error) {
-	err = json.Unmarshal([]byte(logs), &res)
+	err = codec.Cdc.UnmarshalJSON([]byte(logs), &res)
 	return res, err
 }
