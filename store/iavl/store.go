@@ -23,8 +23,11 @@ const (
 
 // load the iavl store
 func LoadStore(db dbm.DB, id types.CommitID, pruning types.PruningOptions) (types.CommitStore, error) {
-	tree := iavl.NewMutableTree(db, defaultIAVLCacheSize)
-	_, err := tree.LoadVersion(id.Version)
+	tree, err := iavl.NewMutableTree(db, defaultIAVLCacheSize)
+	if err != nil {
+		return nil, err
+	}
+	_, err = tree.LoadVersion(id.Version)
 	if err != nil {
 		return nil, err
 	}
@@ -35,8 +38,11 @@ func LoadStore(db dbm.DB, id types.CommitID, pruning types.PruningOptions) (type
 
 // LoadStoreForOverwriting returns the iavl store instance for state overwriting (fork)
 func LoadStoreForOverwriting(db dbm.DB, id types.CommitID, pruning types.PruningOptions) (types.CommitStore, error) {
-	tree := iavl.NewMutableTree(db, defaultIAVLCacheSize)
-	_, err := tree.LoadVersionForOverwriting(id.Version)
+	tree, err := iavl.NewMutableTree(db, defaultIAVLCacheSize)
+	if err != nil {
+		return nil, err
+	}
+	_, err = tree.LoadVersionForOverwriting(id.Version)
 	if err != nil {
 		return nil, err
 	}
@@ -257,11 +263,11 @@ func (st *Store) Query(req abci.RequestQuery) (res abci.ResponseQuery) {
 			if value != nil {
 				// value was found
 				res.Value = value
-				res.Proof = &merkle.Proof{Ops: []merkle.ProofOp{iavl.NewIAVLValueOp(key, proof).ProofOp()}}
+				res.Proof = &merkle.Proof{Ops: []merkle.ProofOp{iavl.NewValueOp(key, proof).ProofOp()}}
 			} else {
 				// value wasn't found
 				res.Value = nil
-				res.Proof = &merkle.Proof{Ops: []merkle.ProofOp{iavl.NewIAVLAbsenceOp(key, proof).ProofOp()}}
+				res.Proof = &merkle.Proof{Ops: []merkle.ProofOp{iavl.NewAbsenceOp(key, proof).ProofOp()}}
 			}
 		} else {
 			_, res.Value = tree.GetVersioned(key, res.Height)
