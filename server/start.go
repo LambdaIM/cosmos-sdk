@@ -123,6 +123,7 @@ func startInProcess(ctx *Context, appCreator AppCreator) (*node.Node, error) {
 	// create & start tendermint node
 	tmNode, err := node.NewNode(
 		cfg,
+		"",
 		pvm.LoadOrGenFilePV(cfg.PrivValidatorKeyFile(), cfg.PrivValidatorStateFile()),
 		nodeKey,
 		proxy.NewLocalClientCreator(app),
