@@ -73,8 +73,7 @@ func (p *Params) ParamSetPairs() params.ParamSetPairs {
 		{KeySignedBlocksWindow, &p.SignedBlocksWindow},
 		{KeyMinSignedPerWindow, &p.MinSignedPerWindow},
 		{KeyDowntimeJailDuration, &p.DowntimeJailDuration},
-		// TODO should use the following codes when release to formal net
-		//{KeyDoubleSignJailDuration, &p.DoubleSignJailDuration},
+		{KeyDoubleSignJailDuration, &p.DoubleSignJailDuration},
 		{KeySlashFractionDoubleSign, &p.SlashFractionDoubleSign},
 		{KeySlashFractionDowntime, &p.SlashFractionDowntime},
 	}
