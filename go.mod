@@ -41,7 +41,7 @@ require (
 )
 
 replace (
-	github.com/tendermint/iavl => github.com/Tjan147/iavl v0.13.2-dev1
+	github.com/tendermint/iavl => github.com/LambdaIM/iavl v0.13.2-dev1
 	github.com/tendermint/tendermint => github.com/LambdaIM/tendermint v0.31.5-dev3
 	golang.org/x/crypto => github.com/tendermint/crypto v0.0.0-20180820045704-3764759f34a5
 )
