@@ -95,18 +95,6 @@ func (st *Store) Commit() types.CommitID {
 		panic(err)
 	}
 
-	// Release an old version of history, if not a sync waypoint.
-	previous := version - 1
-	if st.numRecent < previous {
-		toRelease := previous - st.numRecent
-		if st.storeEvery == 0 || toRelease%st.storeEvery != 0 {
-			err := st.tree.DeleteVersion(toRelease)
-			if err != nil && err.(cmn.Error).Data() != iavl.ErrVersionDoesNotExist {
-				panic(err)
-			}
-		}
-	}
-
 	return types.CommitID{
 		Version: version,
 		Hash:    hash,
@@ -119,18 +107,6 @@ func (st *Store) CommitByKeyStore([]*types.KVStoreKey) types.CommitID {
 	if err != nil {
 		// TODO: Do we want to extend Commit to allow returning errors?
 		panic(err)
-	}
-
-	// Release an old version of history, if not a sync waypoint.
-	previous := version - 1
-	if st.numRecent < previous {
-		toRelease := previous - st.numRecent
-		if st.storeEvery == 0 || toRelease%st.storeEvery != 0 {
-			err := st.tree.DeleteVersion(toRelease)
-			if err != nil && err.(cmn.Error).Data() != iavl.ErrVersionDoesNotExist {
-				panic(err)
-			}
-		}
 	}
 
 	return types.CommitID{
