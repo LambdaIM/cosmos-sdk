@@ -368,6 +368,8 @@ func startTM(
 	node, err := nm.NewNode(
 		tmcfg,
 		privVal,
+		false,
+		nil,
 		nodeKey,
 		proxy.NewLocalClientCreator(app),
 		genDocProvider,

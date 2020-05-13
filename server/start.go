@@ -125,6 +125,8 @@ func startInProcess(ctx *Context, appCreator AppCreator) (*node.Node, error) {
 		cfg,
 		"",
 		pvm.LoadOrGenFilePV(cfg.PrivValidatorKeyFile(), cfg.PrivValidatorStateFile()),
+		false,
+		nil,
 		nodeKey,
 		proxy.NewLocalClientCreator(app),
 		node.DefaultGenesisDocProviderFunc(cfg),
