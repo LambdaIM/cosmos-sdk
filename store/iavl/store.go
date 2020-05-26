@@ -5,6 +5,7 @@ import (
 	"io"
 	"sync"
 
+	"github.com/pkg/errors"
 	"github.com/tendermint/iavl"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/crypto/merkle"
@@ -12,7 +13,7 @@ import (
 	dbm "github.com/tendermint/tendermint/libs/db"
 
 	"github.com/cosmos/cosmos-sdk/store/cachekv"
-	"github.com/cosmos/cosmos-sdk/store/errors"
+	cerrors "github.com/cosmos/cosmos-sdk/store/errors"
 	"github.com/cosmos/cosmos-sdk/store/tracekv"
 	"github.com/cosmos/cosmos-sdk/store/types"
 )
@@ -95,6 +96,18 @@ func (st *Store) Commit() types.CommitID {
 		panic(err)
 	}
 
+	// Release an old version of history, if not a sync waypoint.
+	previous := version - 1
+	if st.numRecent < previous {
+		toRelease := previous - st.numRecent
+		if st.storeEvery == 0 || toRelease%st.storeEvery != 0 {
+			err := st.tree.DeleteVersion(toRelease)
+			if errCause := errors.Cause(err); errCause != nil && errCause != iavl.ErrVersionDoesNotExist {
+				panic(err)
+			}
+		}
+	}
+
 	return types.CommitID{
 		Version: version,
 		Hash:    hash,
@@ -107,6 +120,18 @@ func (st *Store) CommitByKeyStore([]*types.KVStoreKey) types.CommitID {
 	if err != nil {
 		// TODO: Do we want to extend Commit to allow returning errors?
 		panic(err)
+	}
+
+	// Release an old version of history, if not a sync waypoint.
+	previous := version - 1
+	if st.numRecent < previous {
+		toRelease := previous - st.numRecent
+		if st.storeEvery == 0 || toRelease%st.storeEvery != 0 {
+			err := st.tree.DeleteVersion(toRelease)
+			if errCause := errors.Cause(err); errCause != nil && errCause != iavl.ErrVersionDoesNotExist {
+				panic(err)
+			}
+		}
 	}
 
 	return types.CommitID{
@@ -205,7 +230,7 @@ func getHeight(tree *iavl.MutableTree, req abci.RequestQuery) int64 {
 func (st *Store) Query(req abci.RequestQuery) (res abci.ResponseQuery) {
 	if len(req.Data) == 0 {
 		msg := "Query cannot be zero length"
-		return errors.ErrTxDecode(msg).QueryResult()
+		return cerrors.ErrTxDecode(msg).QueryResult()
 	}
 
 	tree := st.tree
@@ -265,7 +290,7 @@ func (st *Store) Query(req abci.RequestQuery) (res abci.ResponseQuery) {
 
 	default:
 		msg := fmt.Sprintf("Unexpected Query path: %v", req.Path)
-		return errors.ErrUnknownRequest(msg).QueryResult()
+		return cerrors.ErrUnknownRequest(msg).QueryResult()
 	}
 
 	return
