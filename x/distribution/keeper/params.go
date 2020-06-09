@@ -14,6 +14,7 @@ func ParamKeyTable() params.KeyTable {
 		ParamStoreKeyPdpReward, sdk.Dec{},
 		ParamStoreKeyPdpProposerReward, sdk.Dec{},
 		ParamStoreKeyWithdrawAddrEnabled, false,
+		ParamStoreKeyPickedAssetMinerReward, sdk.Dec{},
 	)
 }
 
@@ -86,5 +87,15 @@ func (k Keeper) SetPdpReward(ctx sdk.Context, percent sdk.Dec) {
 func (k Keeper) GetPdpReward(ctx sdk.Context) sdk.Dec {
 	var percent sdk.Dec
 	k.paramSpace.Get(ctx, ParamStoreKeyPdpReward, &percent)
+	return percent
+}
+
+func (k Keeper) SetPickedAssetMinerReward(ctx sdk.Context, percent sdk.Dec) {
+	k.paramSpace.Set(ctx, ParamStoreKeyPickedAssetMinerReward, &percent)
+}
+
+func (k Keeper) GetPickedAssetMinerReward(ctx sdk.Context) sdk.Dec {
+	var percent sdk.Dec
+	k.paramSpace.Get(ctx, ParamStoreKeyPickedAssetMinerReward, &percent)
 	return percent
 }

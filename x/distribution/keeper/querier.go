@@ -22,12 +22,13 @@ const (
 	QueryWithdrawAddr                = "withdraw_addr"
 	QueryCommunityPool               = "community_pool"
 
-	ParamCommunityTax        = "community_tax"
-	ParamBaseProposerReward  = "base_proposer_reward"
-	ParamBonusProposerReward = "bonus_proposer_reward"
-	ParamWithdrawAddrEnabled = "withdraw_addr_enabled"
-	ParamPdpReward           = "pdp_reward"
-	ParamPdpProposerReward   = "pdp_proposer_reward"
+	ParamCommunityTax           = "community_tax"
+	ParamBaseProposerReward     = "base_proposer_reward"
+	ParamBonusProposerReward    = "bonus_proposer_reward"
+	ParamWithdrawAddrEnabled    = "withdraw_addr_enabled"
+	ParamPdpReward              = "pdp_reward"
+	ParamPdpProposerReward      = "pdp_proposer_reward"
+	ParamPickedAssetMinerReward = "picked_asset_miner_reward"
 )
 
 func NewQuerier(k Keeper) sdk.Querier {
@@ -100,6 +101,12 @@ func queryParams(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper
 		return bz, nil
 	case ParamPdpProposerReward:
 		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetPdpProposerReward(ctx))
+		if err != nil {
+			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
+		}
+		return bz, nil
+	case ParamPickedAssetMinerReward:
+		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetPickedAssetMinerReward(ctx))
 		if err != nil {
 			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
 		}

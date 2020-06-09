@@ -25,12 +25,13 @@ var (
 	ValidatorAccumulatedCommissionPrefix = []byte{0x07} // key for accumulated validator commission
 	ValidatorSlashEventPrefix            = []byte{0x08} // key for validator slash fraction
 
-	ParamStoreKeyCommunityTax        = []byte("communitytax")
-	ParamStoreKeyBaseProposerReward  = []byte("baseproposerreward")
-	ParamStoreKeyBonusProposerReward = []byte("bonusproposerreward")
-	ParamStoreKeyPdpReward           = []byte("pdpReward")
-	ParamStoreKeyPdpProposerReward   = []byte("pdpProposerReward")
-	ParamStoreKeyWithdrawAddrEnabled = []byte("withdrawaddrenabled")
+	ParamStoreKeyCommunityTax           = []byte("communitytax")
+	ParamStoreKeyBaseProposerReward     = []byte("baseproposerreward")
+	ParamStoreKeyBonusProposerReward    = []byte("bonusproposerreward")
+	ParamStoreKeyPdpReward              = []byte("pdpReward")
+	ParamStoreKeyPdpProposerReward      = []byte("pdpProposerReward")
+	ParamStoreKeyWithdrawAddrEnabled    = []byte("withdrawaddrenabled")
+	ParamStoreKeyPickedAssetMinerReward = []byte("pickedAssetMinerReward")
 )
 
 // gets an address from a validator's outstanding rewards key
