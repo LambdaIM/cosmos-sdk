@@ -32,6 +32,7 @@ const (
 	ParamRewardSlashFraction    = "reward_slash_fraction"
 	ParamMaxRewardSlashFraction = "max_reward_slash_fraction"
 	ParamRewardSlashPeriod      = "reward_slash_period"
+	ParamValSlashRewardFraction = "val_slash_reward_fraction"
 )
 
 func NewQuerier(k Keeper) sdk.Querier {
@@ -122,6 +123,12 @@ func queryParams(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper
 		return bz, nil
 	case ParamMaxRewardSlashFraction:
 		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetMaxRewardSlashFraction(ctx))
+		if err != nil {
+			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
+		}
+		return bz, nil
+	case ParamValSlashRewardFraction:
+		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetValSlashRewardFraction(ctx))
 		if err != nil {
 			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
 		}

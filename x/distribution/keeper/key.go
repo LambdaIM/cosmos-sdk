@@ -35,6 +35,7 @@ var (
 	ParamStoreKeyRewardSlashFraction    = []byte("rewardSlashFraction")
 	ParamStoreKeyMaxRewardSlashFraction = []byte("maxRewardSlashFraction")
 	ParamStoreKeyRewardSlashPeriod      = []byte("rewardSlashPeriod")
+	ParamStoreKeyValSlashRewardFraction = []byte("valSlashRewardFraction")
 )
 
 // gets an address from a validator's outstanding rewards key
