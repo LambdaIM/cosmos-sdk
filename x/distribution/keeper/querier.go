@@ -29,6 +29,9 @@ const (
 	ParamPdpReward              = "pdp_reward"
 	ParamPdpProposerReward      = "pdp_proposer_reward"
 	ParamPickedAssetMinerReward = "picked_asset_miner_reward"
+	ParamRewardSlashFraction    = "reward_slash_fraction"
+	ParamMaxRewardSlashFraction = "max_reward_slash_fraction"
+	ParamRewardSlashPeriod      = "reward_slash_period"
 )
 
 func NewQuerier(k Keeper) sdk.Querier {
@@ -107,6 +110,24 @@ func queryParams(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper
 		return bz, nil
 	case ParamPickedAssetMinerReward:
 		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetPickedAssetMinerReward(ctx))
+		if err != nil {
+			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
+		}
+		return bz, nil
+	case ParamRewardSlashFraction:
+		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetRewardSlashFraction(ctx))
+		if err != nil {
+			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
+		}
+		return bz, nil
+	case ParamMaxRewardSlashFraction:
+		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetMaxRewardSlashFraction(ctx))
+		if err != nil {
+			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
+		}
+		return bz, nil
+	case ParamRewardSlashPeriod:
+		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetRewardSlashPeriod(ctx))
 		if err != nil {
 			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
 		}

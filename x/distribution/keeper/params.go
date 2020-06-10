@@ -15,6 +15,9 @@ func ParamKeyTable() params.KeyTable {
 		ParamStoreKeyPdpProposerReward, sdk.Dec{},
 		ParamStoreKeyWithdrawAddrEnabled, false,
 		ParamStoreKeyPickedAssetMinerReward, sdk.Dec{},
+		ParamStoreKeyRewardSlashFraction, sdk.Dec{},
+		ParamStoreKeyMaxRewardSlashFraction, sdk.Dec{},
+		ParamStoreKeyRewardSlashPeriod, int64(0),
 	)
 }
 
@@ -98,4 +101,34 @@ func (k Keeper) GetPickedAssetMinerReward(ctx sdk.Context) sdk.Dec {
 	var percent sdk.Dec
 	k.paramSpace.Get(ctx, ParamStoreKeyPickedAssetMinerReward, &percent)
 	return percent
+}
+
+func (k Keeper) SetRewardSlashFraction(ctx sdk.Context, percent sdk.Dec) {
+	k.paramSpace.Set(ctx, ParamStoreKeyRewardSlashFraction, &percent)
+}
+
+func (k Keeper) GetRewardSlashFraction(ctx sdk.Context) sdk.Dec {
+	var percent sdk.Dec
+	k.paramSpace.Get(ctx, ParamStoreKeyRewardSlashFraction, &percent)
+	return percent
+}
+
+func (k Keeper) SetMaxRewardSlashFraction(ctx sdk.Context, percent sdk.Dec) {
+	k.paramSpace.Set(ctx, ParamStoreKeyMaxRewardSlashFraction, &percent)
+}
+
+func (k Keeper) GetMaxRewardSlashFraction(ctx sdk.Context) sdk.Dec {
+	var percent sdk.Dec
+	k.paramSpace.Get(ctx, ParamStoreKeyMaxRewardSlashFraction, &percent)
+	return percent
+}
+
+func (k Keeper) SetRewardSlashPeriod(ctx sdk.Context, period int64) {
+	k.paramSpace.Set(ctx, ParamStoreKeyRewardSlashPeriod, period)
+}
+
+func (k Keeper) GetRewardSlashPeriod(ctx sdk.Context) int64 {
+	var period int64
+	k.paramSpace.Get(ctx, ParamStoreKeyRewardSlashPeriod, &period)
+	return period
 }

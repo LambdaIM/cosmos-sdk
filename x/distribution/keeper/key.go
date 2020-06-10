@@ -32,6 +32,9 @@ var (
 	ParamStoreKeyPdpProposerReward      = []byte("pdpProposerReward")
 	ParamStoreKeyWithdrawAddrEnabled    = []byte("withdrawaddrenabled")
 	ParamStoreKeyPickedAssetMinerReward = []byte("pickedAssetMinerReward")
+	ParamStoreKeyRewardSlashFraction    = []byte("rewardSlashFraction")
+	ParamStoreKeyMaxRewardSlashFraction = []byte("maxRewardSlashFraction")
+	ParamStoreKeyRewardSlashPeriod      = []byte("rewardSlashPeriod")
 )
 
 // gets an address from a validator's outstanding rewards key
