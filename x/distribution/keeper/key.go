@@ -31,7 +31,7 @@ var (
 	ParamStoreKeyPdpReward              = []byte("pdpReward")
 	ParamStoreKeyPdpProposerReward      = []byte("pdpProposerReward")
 	ParamStoreKeyWithdrawAddrEnabled    = []byte("withdrawaddrenabled")
-	ParamStoreKeyPickedAssetMinerReward = []byte("pickedAssetMinerReward")
+	ParamStoreKeyTopNAssetMinerReward   = []byte("topNAssetMinerReward")
 	ParamStoreKeyRewardSlashFraction    = []byte("rewardSlashFraction")
 	ParamStoreKeyMaxRewardSlashFraction = []byte("maxRewardSlashFraction")
 	ParamStoreKeyRewardSlashPeriod      = []byte("rewardSlashPeriod")
