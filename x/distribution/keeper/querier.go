@@ -28,7 +28,7 @@ const (
 	ParamWithdrawAddrEnabled    = "withdraw_addr_enabled"
 	ParamPdpReward              = "pdp_reward"
 	ParamPdpProposerReward      = "pdp_proposer_reward"
-	ParamPickedAssetMinerReward = "picked_asset_miner_reward"
+	ParamTopNAssetMinerReward   = "top_n_asset_miner_reward"
 	ParamRewardSlashFraction    = "reward_slash_fraction"
 	ParamMaxRewardSlashFraction = "max_reward_slash_fraction"
 	ParamRewardSlashPeriod      = "reward_slash_period"
@@ -109,8 +109,8 @@ func queryParams(ctx sdk.Context, path []string, req abci.RequestQuery, k Keeper
 			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
 		}
 		return bz, nil
-	case ParamPickedAssetMinerReward:
-		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetPickedAssetMinerReward(ctx))
+	case ParamTopNAssetMinerReward:
+		bz, err := codec.MarshalJSONIndent(k.cdc, k.GetTopNAssetMinerReward(ctx))
 		if err != nil {
 			return nil, sdk.ErrInternal(sdk.AppendMsgToErr("could not marshal result to JSON", err.Error()))
 		}
