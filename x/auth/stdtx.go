@@ -35,6 +35,10 @@ func NewStdTx(msgs []sdk.Msg, fee StdFee, sigs []StdSignature, memo string) StdT
 	}
 }
 
+func (tx StdTx) GetGas() uint64 {
+	return tx.Fee.Gas
+}
+
 // GetMsgs returns the all the transaction's messages.
 func (tx StdTx) GetMsgs() []sdk.Msg { return tx.Msgs }
 
@@ -198,7 +202,7 @@ func StdSignBytes(chainID string, accnum uint64, sequence uint64, fee StdFee, ms
 // StdSignature represents a sig
 type StdSignature struct {
 	crypto.PubKey `json:"pub_key"` // optional
-	Signature     []byte           `json:"signature"`
+	Signature     []byte `json:"signature"`
 }
 
 // DefaultTxDecoder logic for standard transaction decoding
